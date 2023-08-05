@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.dg .c select {
+  color: #000000; /* 你想要的颜色 */
+}
