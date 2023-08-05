@@ -2,7 +2,7 @@ import React from 'react';
 
 const ComponentName = () => {
   return (
-    <div>ComponentName</div>
+    <div>test2</div>
   );
 }
 
