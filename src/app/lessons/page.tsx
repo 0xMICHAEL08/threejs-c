@@ -3,6 +3,7 @@ export default function LessonsPage() {
   const lessons = [
     { id: "01-basic" },
     { id: "02-geometry" },
+    { id: "03-modalobject" },
     // 添加更多课程...
   ];
 

@@ -30,89 +30,58 @@ const BufferGeometry = () => {
   };
 
   /* create geometry */
-  const createLineGeometry = (scene: THREE.Scene) => {
-    const geometry = new THREE.BufferGeometry();
-    //类型化数组创建顶点数据
-    const vertices = new Float32Array([
-      0,
-      0,
-      0, //顶点1坐标
-      50,
-      0,
-      0, //顶点2坐标
-      0,
-      100,
-      0, //顶点3坐标
-      0,
-      0,
-      10, //顶点4坐标
-      0,
-      0,
-      100, //顶点5坐标
-      50,
-      0,
-      10, //顶点6坐标
-    ]);
-    /* BufferAttribute
-      在WebGL（以及其他图形API）中，数据通常存储在缓冲区中，因为这样可以更高效地在GPU和CPU之间传输数据。
-      这是因为GPU可以直接访问存储在缓冲区中的数据，而无需通过CPU进行中转，从而减少了数据传输的时间和开销。
-      在这个例子中，vertices数组包含了几何体的所有顶点数据。
-      通过创建一个BufferAttribute并将其赋值给geometry.attributes.position，我们将这些数据存储在了一个缓冲区中。
-      这样，当我们需要在WebGL中渲染这个几何体时，GPU可以直接访问这些数据，从而提高渲染效率。
-    */
-    const attribute = new THREE.BufferAttribute(vertices, 3);
-    geometry.attributes.position = attribute;
-    const material = new THREE.PointsMaterial({
-      color: 0xffff00,
-      size: 10.0, //点对象像素尺寸
-    });
-    const points = new THREE.Points(geometry, material); //点模型对象
-    const material2 = new THREE.LineBasicMaterial({ color: 0xff0000 });
-    const line = new THREE.LineLoop(geometry, material2); // connected in loops
-    // const line = new THREE.LineSegments(geometry, material2); // connected in pairs
-    scene.add(points, line);
-  };
-
-  const createRectangleGeometry = (scene: THREE.Scene) => {
-    // A rectangular plane that can be formed by splicing at least 2 triangles
-    const geometry = new THREE.BufferGeometry();
-    const vertices = new Float32Array([
-      0, 0, 0,
-
-      80, 0, 0,
-
-      80, 80, 0,
-
-      0, 80, 0,
-    ]);
-    geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3)); // store vertices
-
-    const indexes = new Uint16Array([0, 1, 2, 0, 2, 3]);
-    geometry.index = new THREE.BufferAttribute(indexes, 1); // store index
-
+  const createV3Object = (scene: THREE.Scene) => {
+    const v3 = new THREE.Vector3(0, 0, 0);
+    const geometry = new THREE.SphereGeometry(50, 32, 32);
     const material = new THREE.MeshLambertMaterial({
-      color: 0x0000ff,
-      side: THREE.DoubleSide,
+      color: 0x00ffff,
+      wireframe: true, //线条模式渲染mesh对应的三角形数据
     });
-
-    // normals
-    const normals = new Float32Array([
-      0, 0, 1,
-
-      0, 0, 1,
-
-      0, 0, 1,
-
-      0, 0, 1,
-    ]);
-    geometry.attributes.normal = new THREE.BufferAttribute(normals, 3);
-
-    const pointLight = new THREE.PointLight(0xffffff, 3, 0, 0.1);
-    pointLight.position.set(10, 50, 50);
-    scene.add(pointLight);
-
+    geometry.scale(2, 2, 2);
+    geometry.translate(50, 0, 0);
+    geometry.rotateX(Math.PI / 4);
+    // geometry.center();
     const mesh = new THREE.Mesh(geometry, material);
+    mesh.scale.set(0.5, 1.5, 2);
+    console.log(".position:", mesh.position);
+
     scene.add(mesh);
+  };
+  const createEulerObject = (scene: THREE.Scene) => {
+    const Euler = new THREE.Euler(Math.PI / 4, 0, Math.PI / 2);
+
+    // 创建一个立方体
+    const geometry = new THREE.BoxGeometry(100, 100, 100);
+    const material = new THREE.MeshBasicMaterial({
+      color: 0x00ff00,
+      // wireframe: true,
+    });
+    const mesh = new THREE.Mesh(geometry, material);
+
+    // 将Euler对象应用到立方体的旋转上
+    mesh.rotation.copy(Euler);
+
+    mesh.rotation.y = Math.PI / 3;
+    // mesh.rotation.y += Math.PI / 3;
+
+    // 绕某个轴旋转
+    const axis = new THREE.Vector3(0, 1, 0);
+    mesh.rotateOnAxis(axis, Math.PI / 8);
+
+    console.log("material.color", material.color);
+
+    // 颜色对象
+    const color = new THREE.Color(0x00ff00);
+    color.r = 1;
+    color.setRGB(0, 1, 1);
+    color.setHex(0x00ff00);
+    color.setStyle("#00ff00");
+    color.set("#00ff00");
+    console.log("查看颜色对象结构：", color);
+
+    // 将立方体添加到场景中
+    scene.add(mesh);
+    return { mesh };
   };
 
   /* AxesHelper */
@@ -136,12 +105,14 @@ const BufferGeometry = () => {
   const createRenderLoop = (
     renderer: THREE.WebGLRenderer,
     scene: THREE.Scene,
-    camera: THREE.Camera
+    camera: THREE.Camera,
+    mesh?: THREE.Mesh
   ) => {
     const stats = new Stats();
     document.body.appendChild(stats.domElement);
     function render() {
       stats.update();
+      // if (mesh) mesh.rotateY(0.01);
       renderer.render(scene, camera);
       animationFrameId.current = requestAnimationFrame(render);
     }
@@ -184,18 +155,8 @@ const BufferGeometry = () => {
     const scene = new THREE.Scene();
 
     // createPointGeometry(scene);
-    createLineGeometry(scene);
-    createRectangleGeometry(scene);
-    const geometry = new THREE.SphereGeometry(50, 32, 32);
-    const material = new THREE.MeshLambertMaterial({
-      color: 0x00ffff,
-      wireframe: true, //线条模式渲染mesh对应的三角形数据
-    });
-    geometry.scale(2, 2, 2);
-    geometry.translate(50, 0, 0);
-    geometry.rotateX(Math.PI / 4);
-    geometry.center();
-    scene.add(new THREE.Mesh(geometry, material));
+    // createV3Object(scene);
+    const { mesh } = createEulerObject(scene);
 
     /* 创建相机 */
     const camera = createCamera(sizes);
@@ -210,7 +171,7 @@ const BufferGeometry = () => {
     createOrbitControls(scene, camera, renderer);
 
     /* 创建渲染循环 */
-    const render = createRenderLoop(renderer, scene, camera);
+    const render = createRenderLoop(renderer, scene, camera, mesh);
     render();
 
     /* 设置窗口大小改变时的处理函数 */
