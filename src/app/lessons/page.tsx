@@ -4,6 +4,7 @@ export default function LessonsPage() {
     { id: "01-basic" },
     { id: "02-geometry" },
     { id: "03-modalobject" },
+    { id: "04-hierarchical-model" },
     // 添加更多课程...
   ];
 
