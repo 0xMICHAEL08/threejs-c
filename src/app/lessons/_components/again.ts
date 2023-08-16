@@ -16,7 +16,7 @@ export const useWindowSize = () => {
 };
 
 export const createCamera = (sizes: Sizes): THREE.PerspectiveCamera => {
-  const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height);
+  const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height,0.1,5000);
   camera.position.set(200, 200, 200);
   camera.lookAt(0, 0, 0);
   return camera;
@@ -92,9 +92,12 @@ export const createRenderLoop = (
 
 export const createPointLight = (
   scene: THREE.Scene,
-  position: THREE.Vector3
+  position: THREE.Vector3,
+  intensity: number = 2,
+  distance: number = 0,
+  decay: number = 0.05
 ) => {
-  const pointLight = new THREE.PointLight(0xffffff, 3, 0, 0.1);
+  const pointLight = new THREE.PointLight(0xffffff, intensity, distance, decay);
   pointLight.position.copy(position);
   const pointLightHelper = new THREE.PointLightHelper(pointLight, 10);
   scene.add(pointLight, pointLightHelper);
@@ -116,7 +119,7 @@ export const createDirectionalLight = (
   scene.add(directionalLight, directionalLightHelper);
 };
 
-export const createAmbient = (scene: THREE.Scene) => {
-  const ambient = new THREE.AmbientLight(0xffffff, 0.01);
+export const createAmbient = (scene: THREE.Scene, intensity: number = 0.05) => {
+  const ambient = new THREE.AmbientLight(0xffffff, intensity);
   scene.add(ambient);
 };
