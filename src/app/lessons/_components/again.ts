@@ -16,9 +16,14 @@ export const useWindowSize = () => {
 };
 
 export const createCamera = (sizes: Sizes): THREE.PerspectiveCamera => {
-  const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height,0.1,5000);
-  camera.position.set(200, 200, 200);
-  camera.lookAt(0, 0, 0);
+  const camera = new THREE.PerspectiveCamera(
+    75,
+    sizes.width / sizes.height,
+    0.1,
+    1000
+  );
+  camera.position.set(-144, 95, 95);
+  camera.lookAt(100, 0, 0); // 不生效，相机被Orbit接管
   return camera;
 };
 
@@ -43,6 +48,8 @@ export const createOrbitControls = (
   renderer: THREE.WebGLRenderer
 ) => {
   const controls = new OrbitControls(camera, renderer.domElement);
+  controls.target.set(100, 0, 0);
+  controls.update();
   controls.addEventListener("change", () => {
     renderer.render(scene, camera);
   });

@@ -6,6 +6,7 @@ export default function LessonsPage() {
     { id: "03-modalobject" },
     { id: "04-hierarchical-model" },
     { id: "05-uv-coordinates" },
+    { id: "06-loadgltf" },
     // 添加更多课程...
   ];
 
