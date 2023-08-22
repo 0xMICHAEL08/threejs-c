@@ -7,6 +7,7 @@ export default function LessonsPage() {
     { id: "04-hierarchical-model" },
     { id: "05-uv-coordinates" },
     { id: "06-loadgltf" },
+    { id: "07-pbr-texture" },
     // 添加更多课程...
   ];
 
